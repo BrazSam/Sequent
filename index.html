@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Sequent - SiDY</title>
+</head>
+<body>
+      <!-- ══════════ LOGIN ══════════ -->
+  <div id="login-screen" class="screen active">
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="login-logo-badge">SiDY</span>
+      </div>
+      <div class="login-product-name">Sequent</div>
+      <div class="login-subtitle">Gestão de rematrículas · Escola de Profissões</div>
+
+      <label class="login-label" for="login-user">Usuário</label>
+      <input class="login-input" type="text" id="login-user" placeholder="seu.usuario" />
+
+      <label class="login-label" for="login-pass">Senha</label>
+      <input class="login-input" type="password" id="login-pass" placeholder="••••••••" />
+
+      <button class="login-btn" onclick="doLogin()">Entrar</button>
+      <div class="login-error" id="login-error"></div>
+      <div class="login-hint">Acesso restrito a colaboradores SiDY</div>
+    </div>
+  </div>
+
+  <!-- ══════════ APP ══════════ -->
+  <div id="app-screen" class="screen">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-badge">SiDY</span>
+        <div>
+          <div class="topbar-title">Sequent</div>
+          <div class="topbar-subtitle">Gestão de Rematrículas</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-user" id="topbar-user-name"></span>
+        <button class="logout-btn" onclick="doLogout()">Sair</button>
+      </div>
+    </div>
+
+    <!-- Nav tabs -->
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="switchTab('dashboard')">📋 Painel</div>
+      <div class="nav-tab" onclick="switchTab('cadastro')">➕ Cadastrar Aluno</div>
+    </div>
+
+    <!-- Content -->
+    <div class="main-content">
+
+      <!-- ── PAINEL ── -->
+      <div class="page-panel active" id="panel-dashboard">
+
+        <div class="page-header">
+          <h1>Painel de Rematrículas</h1>
+          <p>Alunos com término previsto nos próximos 30 dias</p>
+        </div>
+
+        <div class="stats-row" id="stats-row"></div>
+
+        <div class="filter-row">
+          <span class="filter-label">Filtrar:</span>
+          <button class="filter-btn active" onclick="applyFilter('todos', this)">Todos</button>
+          <button class="filter-btn" onclick="applyFilter('sem-contato', this)">Sem contato</button>
+          <button class="filter-btn" onclick="applyFilter('rematriculou', this)">Rematriculou</button>
+          <button class="filter-btn" onclick="applyFilter('nao-quis', this)">Não quis</button>
+          <button class="filter-btn" onclick="applyFilter('adiou', this)">Adiou</button>
+          <button class="filter-btn" onclick="applyFilter('nao-atendeu', this)">Não atendeu</button>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Aluno</th>
+                <th>Curso</th>
+                <th>Término</th>
+                <th>Dias restantes</th>
+                <th>Status</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="students-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── CADASTRO ── -->
+      <div class="page-panel" id="panel-cadastro">
+
+        <div class="page-header">
+          <h1>Cadastrar Aluno</h1>
+          <p>Adicione um aluno ao monitoramento de rematrícula</p>
+        </div>
+
+        <div class="form-card">
+          <div class="form-group">
+            <label for="f-nome">Nome completo</label>
+            <input type="text" id="f-nome" placeholder="Ex: Ana Paula Silva" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-curso">Curso atual</label>
+              <select id="f-curso">
+                <option value="">Selecione...</option>
+                <option>Informática Básica</option>
+                <option>Pacote Office</option>
+                <option>Design Gráfico</option>
+                <option>Programação Web</option>
+                <option>Edição de Vídeo</option>
+                <option>Redes e Infraestrutura</option>
+                <option>Excel Avançado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-data">Data de término prevista</label>
+              <input type="date" id="f-data" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="f-tel">WhatsApp (opcional)</label>
+            <input type="text" id="f-tel" placeholder="(49) 99999-9999" />
+          </div>
+
+          <button class="submit-btn" onclick="cadastrarAluno()">Cadastrar aluno</button>
+          <div class="success-msg" id="success-msg">✅ Aluno cadastrado com sucesso!</div>
+        </div>
+      </div>
+
+    </div><!-- /main-content -->
+  </div><!-- /app-screen -->
+
+  <!-- ══════════ MODAL FOLLOW-UP ══════════ -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h2>Registrar contato</h2>
+      <div class="modal-student-name" id="modal-student-name"></div>
+
+      <div class="status-options">
+        <div class="status-option" onclick="selectStatus('rematriculou', this)">
+          <div class="opt-icon">✅</div>
+          <div class="opt-label">Rematriculou</div>
+        </div>
+        <div class="status-option" onclick="selectStatus('nao-quis', this)">
+          <div class="opt-icon">❌</div>
+          <div class="opt-label">Não quis</div>
+        </div>
+        <div class="status-option" onclick="selectStatus('adiou', this)">
+          <div class="opt-icon">🕐</div>
+          <div class="opt-label">Adiou</div>
+        </div>
+        <div class="status-option" onclick="selectStatus('nao-atendeu', this)">
+          <div class="opt-icon">📵</div>
+          <div class="opt-label">Não atendeu</div>
+        </div>
+      </div>
+
+      <label class="modal-obs-label">Observação (opcional)</label>
+      <textarea class="modal-obs" id="modal-obs" placeholder="Ex: Vai pensar e retorna semana que vem..."></textarea>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+        <button class="btn-save" onclick="saveFollowUp()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+<script src="script.js"></script>
+</html>
