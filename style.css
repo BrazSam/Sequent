@@ -36,6 +36,14 @@
     /* ══════════════════════════════
        LOGIN
     ══════════════════════════════ */
+
+    .login-school-logo {
+      margin-bottom: 20px;
+    }
+    .login-school-logo img {
+      max-width: 160px;
+      height: auto;
+    }
     #login-screen {
       min-height: 100vh;
       display: flex;
